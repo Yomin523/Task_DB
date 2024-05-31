@@ -1,0 +1,442 @@
+// 3
+// • Вывести списки групп по заданному направлению с указание номера группы в формате 
+// ФИО, бюджет/внебюджет. Студентов выводить в алфавитном порядке.
+db.Student.aggregate([
+  {
+    $lookup: {
+      from: "Student_groups",
+      localField: "group_id",
+      foreignField: "ID",
+      as: "group"
+    }
+  },
+  {
+    $lookup: {
+      from: "Directions_of_study",
+      localField: "group.direction_id",
+      foreignField: "ID",
+      as: "direction"
+    }
+  },
+  {
+    $project: {
+      "_id": 0,
+      "Full_name": "$full_name",
+      "Group_name": "$group.group_name",
+      "Budget": {
+        $cond: {
+          if: "$budget",
+          then: "Бюджет",
+          else: "Внебюджет"
+        }
+      }
+    }
+  },
+  { $sort: { "Full_name": 1 } }
+]);
+
+// • Вывести студентов с фамилией, начинающейся с первой буквы вашей фамилии, с 
+// указанием ФИО, номера группы и направления обучения. 
+db.Student.aggregate([
+  {
+    $lookup: {
+      from: "Student_groups",
+      localField: "group_id",
+      foreignField: "ID",
+      as: "group"
+    }
+  },
+  {
+    $lookup: {
+      from: "Directions_of_study",
+      localField: "group.direction_id",
+      foreignField: "ID",
+      as: "direction"
+    }
+  },
+  {
+    $match: {
+      "full_name": { $regex: /^Г/ }
+    }
+  },
+  {
+    $project: {
+      "_id": 0,
+      "Full_name": "$full_name",
+      "Group_name": "$group.group_name",
+      "Direction_name": "$direction.direction_name"
+    }
+  }
+]);
+
+// • Вывести список студентов для поздравления по месяцам в формате Фамилия И.О., день и 
+// название месяца рождения, номером группы и направлением обучения.
+db.Student.aggregate([
+  {
+    $lookup: {
+      from: "Student_groups",
+      localField: "group_id",
+      foreignField: "ID",
+      as: "group"
+    }
+  },
+  {
+    $lookup: {
+      from: "Directions_of_study",
+      localField: "group.direction_id",
+      foreignField: "ID",
+      as: "direction"
+    }
+  },
+  {
+    $project: {
+      "Name": {
+        $concat: [
+          { $substrCP: ["$full_name", 0, { $indexOfCP: ["$full_name", " "] }] },
+          ".",
+          { $substrCP: [{ $arrayElemAt: [{ $split: ["$full_name", " "] }, 1] }, 0, 1] },
+          "."
+        ]
+      },
+      "Day": { $dayOfMonth: "$date_of_birth" },
+      "Month": {
+        $switch: {
+          branches: [
+            { case: { $eq: [{ $month: "$date_of_birth" }, 1] }, then: "Январь" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 2] }, then: "Февраль" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 3] }, then: "Март" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 4] }, then: "Апрель" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 5] }, then: "Май" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 6] }, then: "Июнь" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 7] }, then: "Июль" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 8] }, then: "Август" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 9] }, then: "Сентябрь" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 10] }, then: "Октябрь" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 11] }, then: "Ноябрь" },
+            { case: { $eq: [{ $month: "$date_of_birth" }, 12] }, then: "Декабрь" }
+          ],
+          default: "Unknown"
+        }
+      },
+      "Group_name": "$group.group_name",
+      "Direction_name": "$direction.direction_name"
+    }
+  },
+  { $sort: { "Month": 1 } }
+]);
+
+// • Вывести студентов с указанием возраста в годах.
+db.Student.aggregate([
+  {
+    $project: {
+      "Full_name": "$full_name",
+      "Age": {
+        $subtract: [
+          { $year: new Date() },
+          { $year: "$date_of_birth" }
+        ]
+      }
+    }
+  }
+]);
+
+// • Вывести студентов, у которых день рождения в текущем месяце.
+db.Student.aggregate([
+  {
+    $match: {
+      "date_of_birth": {
+        $expr: {
+          $eq: [{ $month: "$date_of_birth" }, { $month: new Date() }]
+        }
+      }
+    }
+  },
+  {
+    $project: {
+      "Name": "$full_name",
+      "Birthday": "$date_of_birth"
+    }
+  }
+]);
+
+// • Вывести количество студентов по каждому направлению.
+db.Student.aggregate([
+  {
+    $lookup: {
+      from: "Student_groups",
+      localField: "group_id",
+      foreignField: "ID",
+      as: "group"
+    }
+  },
+  {
+    $lookup: {
+      from: "Directions_of_study",
+      localField: "group.direction_id",
+      foreignField: "ID",
+      as: "direction"
+    }
+  },
+  {
+    $group: {
+      "_id": "$direction.direction_name",
+      "Students_number": { $sum: 1 }
+    }
+  }
+]);
+
+// • Вывести количество бюджетных и внебюджетных мест по группам. Для каждой группы вывести номер и название направления.
+db.Student.aggregate([
+  {
+    $lookup: {
+      from: "Student_groups",
+      localField: "group_id",
+      foreignField: "ID",
+      as: "group"
+    }
+  },
+  {
+    $lookup: {
+      from: "Directions_of_study",
+      localField: "group.direction_id",
+      foreignField: "ID",
+      as: "direction"
+    }
+  },
+  {
+    $group: {
+      "_id": {
+        "Group_ID": "$group.ID",
+        "Direction_ID": "$direction.ID",
+        "Budget": "$budget"
+      },
+      "Number_of_budget": {
+        $sum: {
+          $cond: [{ $eq: ["$budget", true] }, 1, 0]
+        }
+      },
+      "Number_of_non_budget": {
+        $sum: {
+          $cond: [{ $eq: ["$budget", false] }, 1, 0]
+        }
+      }
+    }
+  },
+  {
+    $project: {
+      "_id": 0,
+      "Group_name": "$group.group_name",
+      "Direction_name": "$direction.direction_name",
+      "Number_of_budget": 1,
+      "Number_of_non_budget": 1
+    }
+  }
+]);
+
+// 5
+// • Вывести списки групп по каждому предмету с указанием преподавателя.
+db.Disciplines.aggregate([
+  {
+    $lookup: {
+      from: "DirectionDisciplineTeacher",
+      localField: "ID",
+      foreignField: "discipline_id",
+      as: "disciplineTeacher"
+    }
+  },
+  {
+    $unwind: "$disciplineTeacher"
+  },
+  {
+    $lookup: {
+      from: "Teachers",
+      localField: "disciplineTeacher.teacher_id",
+      foreignField: "ID",
+      as: "teacher"
+    }
+  },
+  {
+    $lookup: {
+      from: "Student_groups",
+      localField: "disciplineTeacher.direction_id",
+      foreignField: "direction_id",
+      as: "groups"
+    }
+  },
+  {
+    $project: {
+      "_id": 0,
+      "Discipline_name": "$name",
+      "Teacher": { $arrayElemAt: ["$teacher.name", 0] },
+      "Groups": "$groups.group_name"
+    }
+  }
+]);
+
+// • Определить, какую дисциплину изучает максимальное количество студентов.
+db.Marks.aggregate([
+  {
+    $lookup: {
+      from: "DirectionDisciplineTeacher",
+      localField: "sub_disc_teach_id",
+      foreignField: "ID",
+      as: "disciplineTeacher"
+    }
+  },
+  {
+    $unwind: "$disciplineTeacher"
+  },
+  {
+    $lookup: {
+      from: "Student",
+      localField: "student_id",
+      foreignField: "ID",
+      as: "student"
+    }
+  },
+  {
+    $group: {
+      "_id": "$disciplineTeacher.discipline_id",
+      "discipline_name": { $first: "$disciplineTeacher.discipline_id" },
+      "num_students": { $sum: 1 }
+    }
+  },
+  {
+    $sort: { "num_students": -1 }
+  },
+  {
+    $limit: 1
+  }
+]);
+
+// • Определить сколько студентов обучатся у каждого их преподавателей.
+db.DirectionDisciplineTeacher.aggregate([
+  {
+    $lookup: {
+      from: "Marks",
+      localField: "ID",
+      foreignField: "sub_disc_teach_id",
+      as: "marks"
+    }
+  },
+  {
+    $lookup: {
+      from: "Student",
+      localField: "marks.student_id",
+      foreignField: "ID",
+      as: "students"
+    }
+  },
+  {
+    $lookup: {
+      from: "Teachers",
+      localField: "teacher_id",
+      foreignField: "ID",
+      as: "teacher"
+    }
+  },
+  {
+    $group: {
+      "_id": "$teacher_id",
+      "Teacher_name": { $first: "$teacher.name" },
+      "num_students": { $sum: { $size: "$students" } }
+    }
+  }
+]);
+
+// • Определить долю ставших студентов по каждой дисциплине (не оценки или 2 считать не сдавшими).
+db.DirectionDisciplineTeacher.aggregate([
+  {
+    $lookup: {
+      from: "Marks",
+      localField: "ID",
+      foreignField: "sub_disc_teach_id",
+      as: "marks"
+    }
+  },
+  {
+    $lookup: {
+      from: "Student",
+      localField: "marks.student_id",
+      foreignField: "ID",
+      as: "students"
+    }
+  },
+  {
+    $group: {
+      "_id": "$discipline_id",
+      "num_passed_students": {
+        $sum: {
+          $cond: [
+            { $gt: ["$marks.mark", 2] },
+            1,
+            0
+          ]
+        }
+      },
+      "total_students": { $sum: 1 }
+    }
+  },
+  {
+    $project: {
+      "_id": 0,
+      "discipline_id": "$_id",
+      "passed_ratio": {
+        $divide: ["$num_passed_students", "$total_students"]
+      }
+    }
+  }
+]);
+
+// • Определить среднюю оценку по предметам (для сдавших студентов)
+// • Определить группу с максимальной средней оценкой (включая не сдавших)
+db.DirectionDisciplineTeacher.aggregate([
+  {
+    $lookup: {
+      from: "Marks",
+      localField: "ID",
+      foreignField: "sub_disc_teach_id",
+      as: "marks"
+    }
+  },
+  {
+    $group: {
+      "_id": "$direction_id",
+      "average_mark": { $avg: "$marks.mark" }
+    }
+  },
+  {
+    $sort: { "average_mark": -1 }
+  },
+  {
+    $limit: 1
+  }
+]);
+
+// • Вывести студентов со всем оценками отлично и не имеющих несданный экзамен
+db.Marks.aggregate([
+  {
+    $group: {
+      "_id": "$student_id",
+      "avg_mark": { $avg: "$mark" }
+    }
+  },
+  {
+    $match: { "avg_mark": 5 }
+  },
+  {
+    $lookup: {
+      from: "Student",
+      localField: "_id",
+      foreignField: "ID",
+      as: "student_info"
+    }
+  },
+  {
+    $project: {
+      "_id": 0,
+      "Full_name": "$student_info.full_name",
+      "Average_mark": "$avg_mark"
+    }
+  }
+]);

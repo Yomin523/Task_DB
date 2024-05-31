@@ -1,0 +1,1281 @@
+db.createCollection("Directions_of_study", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["direction_name"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор направления"
+            },
+            direction_name: {
+               bsonType: "string",
+               description: "Название направления"
+            }
+         }
+      }
+   }
+})
+
+db.createCollection("Groups", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["group_name", "direction_id"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор группы"
+            },
+            group_name: {
+               bsonType: "string",
+               description: "Название группы"
+            },
+            direction_id: {
+               bsonType: "int",
+               description: "Идентификатор направления"
+            }
+         }
+      }
+   }
+})
+
+db.createCollection("Student", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["full_name", "date_of_birth", "group_id", "budget"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор студента"
+            },
+            full_name: {
+               bsonType: "string",
+               description: "ФИО студента"
+            },
+            date_of_birth: {
+               bsonType: "date",
+               description: "Дата рождения"
+            },
+            address: {
+               bsonType: "string",
+               description: "Адрес проживания"
+            },
+            email: {
+               bsonType: "string",
+               description: "Адрес электронной почты"
+            },
+            group_id: {
+               bsonType: "int",
+               description: "Идентификатор группы"
+            },
+            budget: {
+               bsonType: "bool",
+               description: "Признак бюджетного/внебюджетного обучения"
+            }
+         }
+      }
+   }
+})
+
+db.createCollection("Phone_numbers", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["student_id", "phone_number"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор телефона"
+            },
+            student_id: {
+               bsonType: "int",
+               description: "Идентификатор студента"
+            },
+            phone_number: {
+               bsonType: "string",
+               description: "Номер телефона"
+            }
+         }
+      }
+   }
+})
+
+db.createCollection("Marks", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["student_id", "sub_disc_teach_id"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор оценки"
+            },
+            student_id: {
+               bsonType: "int",
+               description: "Идентификатор студента"
+            },
+            sub_disc_teach_id: {
+               bsonType: "int",
+               description: "Идентификатор записи DirectionDisciplineTeacher"
+            },
+            mark: {
+               bsonType: ["int", "null"],
+               description: "Оценка"
+            }
+         }
+      }
+   }
+})
+
+db.createCollection("Disciplines", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["name"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор дисциплины"
+            },
+            name: {
+               bsonType: "string",
+               description: "Название дисциплины"
+            }
+         }
+      }
+   }
+})
+
+// Создание коллекции Teachers
+db.createCollection("Teachers", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["name"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор преподавателя"
+            },
+            name: {
+               bsonType: "string",
+               description: "ФИО преподавателя"
+            }
+         }
+      }
+   }
+})
+
+db.createCollection("Pair_time", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["time_start", "time_end"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор времени пары"
+            },
+            time_start: {
+               bsonType: "string",
+               description: "Время начала"
+            },
+            time_end: {
+               bsonType: "string",
+               description: "Время окончания"
+            }
+         }
+      }
+   }
+})
+
+db.createCollection("DirectionDisciplineTeacher", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["direction_id", "discipline_id", "teacher_id"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор записи"
+            },
+            direction_id: {
+               bsonType: "int",
+               description: "Идентификатор направления"
+            },
+            discipline_id: {
+               bsonType: "int",
+               description: "Идентификатор дисциплины"
+            },
+            teacher_id: {
+               bsonType: "int",
+               description: "Идентификатор преподавателя"
+            }
+         }
+      }
+   }
+})
+
+db.createCollection("Lessons_schedule", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["sub_disc_teach_id", "time_id", "date"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор расписания"
+            },
+            sub_disc_teach_id: {
+               bsonType: "int",
+               description: "Идентификатор записи DirectionDisciplineTeacher"
+            },
+            time_id: {
+               bsonType: "int",
+               description: "Идентификатор времени пары"
+            },
+            date: {
+               bsonType: "date",
+               description: "Дата проведения"
+            }
+         }
+      }
+   }
+})
+
+db.createCollection("Attendance", {
+   validator: {
+      $jsonSchema: {
+         bsonType: "object",
+         required: ["schedule_id", "student_id", "presence"],
+         properties: {
+            id: {
+               bsonType: "int",
+               description: "Уникальный идентификатор посещаемости"
+            },
+            schedule_id: {
+               bsonType: "int",
+               description: "Идентификатор расписания"
+            },
+            student_id: {
+               bsonType: "int",
+               description: "Идентификатор студента"
+            },
+            presence: {
+               bsonType: "bool",
+               description: "Признак присутствия"
+            }
+         }
+      }
+   }
+})
+
+db.Directions_of_study.insertMany([
+    { "direction_name": "Information systems and technologies" },
+    { "direction_name": "Applied Informatics" },
+    { "direction_name": "Business Informatics" }
+])
+
+db.Student_groups.insertMany([
+    { "group_name": "IS101", "direction_id": 1 },
+    { "group_name": "IS102", "direction_id": 1 },
+    { "group_name": "IS103", "direction_id": 1 },
+    { "group_name": "PI101", "direction_id": 2 },
+    { "group_name": "PI102", "direction_id": 2 },
+    { "group_name": "PI103", "direction_id": 2 },
+    { "group_name": "BI101", "direction_id": 3 },
+    { "group_name": "BI102", "direction_id": 3 },
+    { "group_name": "BI103", "direction_id": 3 }
+])
+
+db.Student.insertMany([
+    {
+        "full_name": "Eremin Alexander Alexandrovich",
+        "date_of_birth": ISODate("2000-11-24"),
+        "address": "Tomsk, Mira str., No. 11",
+        "email": "amwflmym49@bk.ru",
+        "group_id": 1,
+        "budget": true
+    },
+    {
+        "full_name": "Doronin Garri Oskarovich",
+        "date_of_birth": ISODate("2003-03-25"),
+        "address": "g. Novosibirsk, ul. Polevaya, d. 11",
+        "email": "39@mail.ru",
+        "group_id": 1,
+        "budget": false
+    },
+    {
+        "full_name": "Eremin Alexander Petrovich",
+        "date_of_birth": ISODate("2002-10-22"),
+        "address": "Almetyevsk, Zheleznodorozhnaya str., No. 14",
+        "email": "nkxymmbb37@bk.ru",
+        "group_id": 1,
+        "budget": true
+    },
+    {
+        "full_name": "Golovach Elisaveta Petrovna",
+        "date_of_birth": ISODate("2004-10-05"),
+        "address": "Severodvinsk, Pionerskaya str., No. 7",
+        "email": "psriphqr68@bk.ru",
+        "group_id": 1,
+        "budget": false
+    },
+    {
+        "full_name": "Bishler Elisaveta Konstantinovna",
+        "date_of_birth": ISODate("2003-01-01"),
+        "address": "Petropavlovsk-Kamchatsky, Trudovaya str., No. 12",
+        "email": "usjjkfhz69@bk.ru",
+        "group_id": 1,
+        "budget": false
+    },
+    {
+        "full_name": "Sergeev Sergius Sergievich",
+        "date_of_birth": ISODate("2000-01-02"),
+        "address": "Yuzhno-Sakhalinsk, Krasnoarmeiskaya str., No. 19",
+        "email": "tipjions3@bk.ru",
+        "group_id": 1,
+        "budget": true
+    },
+    {
+        "full_name": "Eremyuk Sergius Vasilievich",
+        "date_of_birth": ISODate("2002-12-16"),
+        "address": "Chelyabinsk, Pervomaysky lane, No. 9",
+        "email": "imbbnglx66@bk.ru",
+        "group_id": 1,
+        "budget": true
+    }
+])
+
+db.Student.insertMany([
+    {
+        "full_name": "Isaev Orest Boguslavovich",
+        "date_of_birth": ISODate("2001-12-21"),
+        "address": "g. Krasnodar, ul. Severnaya, d. 24",
+        "email": "1@mail.ru",
+        "group_id": 2,
+        "budget": true
+    },
+    {
+        "full_name": "Lobanov Mstislav Vitalievich",
+        "date_of_birth": ISODate("2002-02-12"),
+        "address": "g. Voronezh, ul. Komsomolskaya, d. 39",
+        "email": "47@mail.ru",
+        "group_id": 2,
+        "budget": true
+    },
+    {
+        "full_name": "Smirnov Stepan Panteleimonovich",
+        "date_of_birth": ISODate("2000-10-16"),
+        "address": "g. Omsk, ul. Mira, d. 35",
+        "email": "16@mail.ru",
+        "group_id": 2,
+        "budget": true
+    },
+    {
+        "full_name": "Sobolev Yustin Frolovich",
+        "date_of_birth": ISODate("2002-03-25"),
+        "address": "g. Novosibirsk, ul. Lugovaya, d. 41",
+        "email": "31@mail.ru",
+        "group_id": 2,
+        "budget": false
+    },
+    {
+        "full_name": "Saveliev Ovidiy Fedoseevich",
+        "date_of_birth": ISODate("2003-04-12"),
+        "address": "g. Volgograd, ul. Mira, d. 42",
+        "email": "30@mail.ru",
+        "group_id": 2,
+        "budget": true
+    },
+    {
+        "full_name": "Mironov Averkiy Martynovich",
+        "date_of_birth": ISODate("2000-04-22"),
+        "address": "g. Chelyabinsk, ul. Shkolnaya, d. 11",
+        "email": "36@mail.ru",
+        "group_id": 2,
+        "budget": false
+    },
+    {
+        "full_name": "Bespalov Alan Maksimovich",
+        "date_of_birth": ISODate("2003-06-06"),
+        "address": "g. Moscow, ul. Sadovaya, d. 40",
+        "email": "25@mail.ru",
+        "group_id": 2,
+        "budget": false
+    },
+    {
+        "full_name": "Principov Ivan Abramov",
+        "date_of_birth": ISODate("2002-02-23"),
+        "address": "g. Novosibirsk, ul. Perilovnaya, d. 8",
+        "email": "alkdj213@gmail.com",
+        "group_id": 2,
+        "budget": true
+    }
+])
+
+
+db.Student.insertMany([
+    {
+        "full_name": "Uvarov Andrey Sozonovich",
+        "date_of_birth": ISODate("2002-08-16"),
+        "address": "g. Volgograd, ul. Naberezhnaya, d. 38",
+        "email": "6@mail.ru",
+        "group_id": 4,
+        "budget": true
+    },
+    {
+        "full_name": "Shilov Zakhar Kirillovich",
+        "date_of_birth": ISODate("2001-05-04"),
+        "address": "g. Volgograd, ul. Oktyabrskaya, d. 17",
+        "email": "31@mail.ru",
+        "group_id": 4,
+        "budget": false
+    },
+    {
+        "full_name": "Khokhlov Vitaliy Platonovich",
+        "date_of_birth": ISODate("2003-09-21"),
+        "address": "g. Saint Petersburg, ul. Lugovaya, d. 32",
+        "email": "14@mail.ru",
+        "group_id": 4,
+        "budget": false
+    },
+    {
+        "full_name": "Shubin Vadim Donatovich",
+        "date_of_birth": ISODate("2003-07-22"),
+        "address": "g. Krasnoyarsk, ul. Zarechnaya, d. 35",
+        "email": "2@mail.ru",
+        "group_id": 4,
+        "budget": true
+    },
+    {
+        "full_name": "Sitnikov Ovidiy Oskarovich",
+        "date_of_birth": ISODate("2002-11-22"),
+        "address": "g. Krasnodar, ul. Lesnaya, d. 36",
+        "email": "4@mail.ru",
+        "group_id": 4,
+        "budget": true
+    },
+    {
+        "full_name": "Zakharov Ninel Arkadyevich",
+        "date_of_birth": ISODate("2002-04-08"),
+        "address": "g. Volgograd, ul. Naberezhnaya, d. 0",
+        "email": "27@mail.ru",
+        "group_id": 4,
+        "budget": true
+    },
+    {
+        "full_name": "Vishnyakov Saveliy Evgenyevich",
+        "date_of_birth": ISODate("2003-06-12"),
+        "address": "g. Rostov-on-Don, ul. Naberezhnaya, d. 19",
+        "email": "10@mail.ru",
+        "group_id": 4,
+        "budget": false
+    },
+    {
+        "full_name": "Gorbachyov Kassian Fedoseevich",
+        "date_of_birth": ISODate("2001-02-16"),
+        "address": "g. Perm, ul. Naberezhnaya, d. 27",
+        "email": "21@mail.ru",
+        "group_id": 4,
+        "budget": false
+    },
+    {
+        "full_name": "Novikov Karl Melorovich",
+        "date_of_birth": ISODate("2000-02-22"),
+        "address": "g. Perm, ul. Severnaya, d. 44",
+        "email": "25@mail.ru",
+        "group_id": 4,
+        "budget": false
+    },
+    {
+        "full_name": "Maslov Rodion Mironovich",
+        "date_of_birth": ISODate("2001-12-03"),
+        "address": "g. Voronezh, ul. Gagarina, d. 32",
+        "email": "23@mail.ru",
+        "group_id": 4,
+        "budget": true
+    }
+])
+
+db.Student.insertMany([
+    {
+        "full_name": "Vorobyov Irakliy Evseevich",
+        "date_of_birth": ISODate("2002-07-28"),
+        "address": "g. Chelyabinsk, ul. Pervomayskaya, d. 1",
+        "email": "20@mail.ru",
+        "group_id": 5,
+        "budget": true
+    },
+    {
+        "full_name": "Ignatyev Igor Gelasievich",
+        "date_of_birth": ISODate("2001-04-03"),
+        "address": "g. Moscow, ul. Lenina, d. 3",
+        "email": "3@mail.ru",
+        "group_id": 5,
+        "budget": true
+    },
+    {
+        "full_name": "Zinovyev Panteleimon Ignatievich",
+        "date_of_birth": ISODate("2003-05-27"),
+        "address": "g. Krasnodar, ul. Lugovaya, d. 8",
+        "email": "49@mail.ru",
+        "group_id": 5,
+        "budget": true
+    },
+    {
+        "full_name": "Evdokimov Vilen Denisovich",
+        "date_of_birth": ISODate("2000-07-12"),
+        "address": "g. Nizhny Novgorod, ul. Sovetskaya, d. 22",
+        "email": "35@mail.ru",
+        "group_id": 5,
+        "budget": false
+    },
+    {
+        "full_name": "Nekrasov Frol Kirillovich",
+        "date_of_birth": ISODate("2000-05-23"),
+        "address": "g. Yekaterinburg, ul. Lenina, d. 4",
+        "email": "36@mail.ru",
+        "group_id": 5,
+        "budget": true
+    },
+    {
+        "full_name": "Doronin Garri Oskarovich",
+        "date_of_birth": ISODate("2001-10-17"),
+        "address": "g. Volgograd, ul. Tsentralnaya, d. 16",
+        "email": "3@mail.ru",
+        "group_id": 5,
+        "budget": true
+    },
+    {
+        "full_name": "Sergeev Voldemar Dmitrievich",
+        "date_of_birth": ISODate("2002-07-17"),
+        "address": "g. Saint Petersburg, ul. Lenina, d. 14",
+        "email": "44@mail.ru",
+        "group_id": 5,
+        "budget": false
+    },
+    {
+        "full_name": "Shestakov Petr Efimovich",
+        "date_of_birth": ISODate("2002-02-12"),
+        "address": "g. Volgograd, ul. Solnechnaya, d. 25",
+        "email": "36@mail.ru",
+        "group_id": 5,
+        "budget": false
+    }
+])
+
+db.Student.insertMany([
+    {
+        "full_name": "Likhachyov Leonid Georgiyevich",
+        "date_of_birth": ISODate("2001-02-31"),
+        "address": "g. Rostov-na-Donu, ul. Lenina, d. 43",
+        "email": "0@mail.ru",
+        "group_id": 6,
+        "budget": true
+    },
+    {
+        "full_name": "Medvedev Karl Yeremeyevich",
+        "date_of_birth": ISODate("2001-07-03"),
+        "address": "g. Yekaterinburg, ul. Molodezhnaya, d. 21",
+        "email": "26@mail.ru",
+        "group_id": 6,
+        "budget": false
+    },
+    {
+        "full_name": "Galkin Avgust Petrovich",
+        "date_of_birth": ISODate("2000-12-02"),
+        "address": "g. Chelyabinsk, ul. Novaya, d. 24",
+        "email": "13@mail.ru",
+        "group_id": 6,
+        "budget": false
+    },
+    {
+        "full_name": "Nazarov Gavriil Stanislavovich",
+        "date_of_birth": ISODate("2001-09-20"),
+        "address": "g. Moscow, ul. Sadovaya, d. 29",
+        "email": "23@mail.ru",
+        "group_id": 6,
+        "budget": true
+    },
+    {
+        "full_name": "Dementyev Erik Eldarovych",
+        "date_of_birth": ISODate("2003-03-17"),
+        "address": "g. Ufa, ul. Lenina, d. 14",
+        "email": "17@mail.ru",
+        "group_id": 6,
+        "budget": true
+    },
+    {
+        "full_name": "Sitnikov Leonid Veniaminovich",
+        "date_of_birth": ISODate("2001-04-02"),
+        "address": "g. Novosibirsk, ul. Severnaya, d. 50",
+        "email": "15@mail.ru",
+        "group_id": 6,
+        "budget": true
+    },
+    {
+        "full_name": "Isayev Orest Boguslavovich",
+        "date_of_birth": ISODate("2002-11-31"),
+        "address": "g. Krasnoyarsk, ul. Molodezhnaya, d. 5",
+        "email": "20@mail.ru",
+        "group_id": 6,
+        "budget": false
+    },
+    {
+        "full_name": "Lobanov Mstislav Vitalyevich",
+        "date_of_birth": ISODate("2000-11-02"),
+        "address": "g. Voronezh, ul. Severnaya, d. 3",
+        "email": "13@mail.ru",
+        "group_id": 6,
+        "budget": true
+    },
+    {
+        "full_name": "Smirnov Stepan Panteleimonovich",
+        "date_of_birth": ISODate("2003-01-28"),
+        "address": "g. Chelyabinsk, ul. Sovetskaya, d. 8",
+        "email": "25@mail.ru",
+        "group_id": 6,
+        "budget": true
+    },
+    {
+        "full_name": "Sobolev Yustin Frolovich",
+        "date_of_birth": ISODate("2002-08-23"),
+        "address": "g. Omsk, ul. Polevaya, d. 24",
+        "email": "8@mail.ru",
+        "group_id": 6,
+        "budget": false
+    }
+])
+
+db.Student.insertMany([
+    {
+        "full_name": "Saveliev Ovidiy Fedoseevich",
+        "date_of_birth": ISODate("2001-05-14"),
+        "address": "g. Rostov-na-Donu, ul. Shkolnaya, d. 35",
+        "email": "33@mail.ru",
+        "group_id": 7,
+        "budget": false
+    },
+    {
+        "full_name": "Gromov Lyubov Grigoryevich",
+        "date_of_birth": ISODate("2002-02-19"),
+        "address": "g. Chelyabinsk, ul. Naberezhnaya, d. 50",
+        "email": "49@mail.ru",
+        "group_id": 7,
+        "budget": true
+    },
+    {
+        "full_name": "Mironov Averkiy Martynovich",
+        "date_of_birth": ISODate("2002-03-24"),
+        "address": "g. Krasnodar, ul. Zarechnaya, d. 46",
+        "email": "35@mail.ru",
+        "group_id": 7,
+        "budget": true
+    },
+    {
+        "full_name": "Bespalov Alan Maksimovich",
+        "date_of_birth": ISODate("2000-01-27"),
+        "address": "g. Krasnoyarsk, ul. Solnechnaya, d. 46",
+        "email": "7@mail.ru",
+        "group_id": 7,
+        "budget": true
+    },
+    {
+        "full_name": "Seleznov Yuriy Melsovich",
+        "date_of_birth": ISODate("2003-03-16"),
+        "address": "g. Yekaterinburg, ul. Mira, d. 39",
+        "email": "23@mail.ru",
+        "group_id": 7,
+        "budget": true
+    },
+    {
+        "full_name": "Zuev Denis Fedorovich",
+        "date_of_birth": ISODate("2002-10-08"),
+        "address": "g. Nizhniy Novgorod, ul. Novaya, d. 27",
+        "email": "16@mail.ru",
+        "group_id": 7,
+        "budget": false
+    },
+    {
+        "full_name": "Krasilnikov Leonard Nikitevich",
+        "date_of_birth": ISODate("2003-11-22"),
+        "address": "g. Volgograd, ul. Sovetskaya, d. 29",
+        "email": "49@mail.ru",
+        "group_id": 7,
+        "budget": true
+    },
+    {
+        "full_name": "Pestov Ermolay Vyacheslavovich",
+        "date_of_birth": ISODate("2001-04-03"),
+        "address": "g. Samara, ul. Naberezhnaya, d. 42",
+        "email": "27@mail.ru",
+        "group_id": 7,
+        "budget": true
+    },
+    {
+        "full_name": "Trofimov Osip Agafonovich",
+        "date_of_birth": ISODate("2001-04-16"),
+        "address": "g. Novosibirsk, ul. Sovetskaya, d. 11",
+        "email": "3@mail.ru",
+        "group_id": 7,
+        "budget": true
+    },
+    {
+        "full_name": "Dementyev Elisey Fedotovich",
+        "date_of_birth": ISODate("2000-11-11"),
+        "address": "g. Krasnoyarsk, ul. Lenina, d. 2",
+        "email": "1@mail.ru",
+        "group_id": 7,
+        "budget": false
+    },
+    {
+        "full_name": "Panov Anatoliy Valentinovich",
+        "date_of_birth": ISODate("2003-01-24"),
+        "address": "g. Krasnodar, ul. Lesnaya, d. 25",
+        "email": "34@mail.ru",
+        "group_id": 7,
+        "budget": true
+    },
+    {
+        "full_name": "Nikonov Ustin Evseevich",
+        "date_of_birth": ISODate("2001-05-31"),
+        "address": "g. Perm, ul. Molodezhnaya, d. 36",
+        "email": "46@mail.ru",
+        "group_id": 7,
+        "budget": true
+    }
+])
+
+db.Student.insertMany([
+    {
+        "full_name": "Dementyev Erik Eldarovich",
+        "date_of_birth": ISODate("2002-09-03"),
+        "address": "g. Saint Petersburg, ul. Sadovaya, d. 26",
+        "email": "39@mail.ru",
+        "group_id": 8,
+        "budget": true
+    },
+    {
+        "full_name": "Shestakov Petr Efimovich",
+        "date_of_birth": ISODate("2002-03-20"),
+        "address": "g. Krasnodar, ul. Severnaya, d. 7",
+        "email": "8@mail.ru",
+        "group_id": 8,
+        "budget": false
+    },
+    {
+        "full_name": "Sitnikov Leonid Veniaminovich",
+        "date_of_birth": ISODate("2002-09-05"),
+        "address": "g. Volgograd, ul. Tsentralnaya, d. 41",
+        "email": "40@mail.ru",
+        "group_id": 8,
+        "budget": false
+    },
+    {
+        "full_name": "Ivankov Oscar Fedotovich",
+        "date_of_birth": ISODate("2000-05-23"),
+        "address": "g. Novosibirsk, ul. Oktyabrskaya, d. 10",
+        "email": "38@mail.ru",
+        "group_id": 8,
+        "budget": false
+    },
+    {
+        "full_name": "Nesterov Vyacheslav Ulebovich",
+        "date_of_birth": ISODate("2002-04-15"),
+        "address": "g. Yekaterinburg, ul. Naberezhnaya, d. 22",
+        "email": "32@mail.ru",
+        "group_id": 8,
+        "budget": false
+    },
+    {
+        "full_name": "Lebedev Villi Eduardovich",
+        "date_of_birth": ISODate("2000-11-29"),
+        "address": "g. Voronezh, ul. Shkolnaya, d. 37",
+        "email": "44@mail.ru",
+        "group_id": 8,
+        "budget": true
+    },
+    {
+        "full_name": "Gorbachyov Aleksandr Martynovich",
+        "date_of_birth": ISODate("2002-02-19"),
+        "address": "g. Voronezh, ul. Gagarina, d. 43",
+        "email": "37@mail.ru",
+        "group_id": 8,
+        "budget": true
+    },
+    {
+        "full_name": "Vishnyakov Osip Lukyevich",
+        "date_of_birth": ISODate("2003-07-26"),
+        "address": "g. Nizhniy Novgorod, ul. Pervomayskaya, d. 20",
+        "email": "38@mail.ru",
+        "group_id": 8,
+        "budget": false
+    },
+    {
+        "full_name": "Fomichyov Nison Lvovich",
+        "date_of_birth": ISODate("2001-01-15"),
+        "address": "g. Omsk, ul. Pervomayskaya, d. 31",
+        "email": "13@mail.ru",
+        "group_id": 8,
+        "budget": true
+    },
+    {
+        "full_name": "Uvarov Andrey Sozonovich",
+        "date_of_birth": ISODate("2003-12-13"),
+        "address": "g. Saint Petersburg, ul. Tsentralnaya, d. 44",
+        "email": "22@mail.ru",
+        "group_id": 8,
+        "budget": true
+    },
+    {
+        "full_name": "Shilov Zakhar Kirillovich",
+        "date_of_birth": ISODate("2003-05-03"),
+        "address": "g. Perm, ul. Sovetskaya, d. 5",
+        "email": "21@mail.ru",
+        "group_id": 8,
+        "budget": true
+    },
+    {
+        "full_name": "Khokhlov Vitaliy Platonovich",
+        "date_of_birth": ISODate("2002-11-24"),
+        "address": "g. Samara, ul. Mira, d. 16",
+        "email": "26@mail.ru",
+        "group_id": 8,
+        "budget": false
+    },
+    {
+        "full_name": "Shubin Vadim Donatovich",
+        "date_of_birth": ISODate("2001-07-22"),
+        "address": "g. Moscow, ul. Solnechnaya, d. 6",
+        "email": "45@mail.ru",
+        "group_id": 8,
+        "budget": true
+    }
+])
+
+db.Student.insertMany([
+    {
+        "full_name": "Krasilnikov Leonard Nikitevich",
+        "date_of_birth": ISODate("2000-01-28"),
+        "address": "g. Saint Petersburg, ul. Lesnaya, d. 26",
+        "email": "42@mail.ru",
+        "group_id": 9,
+        "budget": true
+    },
+    {
+        "full_name": "Pestov Ermolay Vyacheslavovich",
+        "date_of_birth": ISODate("2002-10-01"),
+        "address": "g. Rostov-na-Donu, ul. Polevaya, d. 24",
+        "email": "33@mail.ru",
+        "group_id": 9,
+        "budget": true
+    },
+    {
+        "full_name": "Trofimov Osip Agafonovich",
+        "date_of_birth": ISODate("2000-04-01"),
+        "address": "g. Volgograd, ul. Sovetskaya, d. 23",
+        "email": "39@mail.ru",
+        "group_id": 9,
+        "budget": true
+    },
+    {
+        "full_name": "Zakharov Ninel Arkadyevich",
+        "date_of_birth": ISODate("2003-02-10"),
+        "address": "g. Perm, ul. Sovetskaya, d. 25",
+        "email": "47@mail.ru",
+        "group_id": 9,
+        "budget": false
+    },
+    {
+        "full_name": "Vishnyakov Saveliy Evgenyevich",
+        "date_of_birth": ISODate("2001-05-11"),
+        "address": "g. Novosibirsk, ul. Lesnaya, d. 28",
+        "email": "1@mail.ru",
+        "group_id": 9,
+        "budget": true
+    },
+    {
+        "full_name": "Gorbachyov Kassian Fedoseevich",
+        "date_of_birth": ISODate("2001-01-07"),
+        "address": "g. Omsk, ul. Sovetskaya, d. 15",
+        "email": "40@mail.ru",
+        "group_id": 9,
+        "budget": true
+    },
+    {
+        "full_name": "Novikov Karl Melorovich",
+        "date_of_birth": ISODate("2003-04-11"),
+        "address": "g. Samara, ul. Molodezhnaya, d. 5",
+        "email": "39@mail.ru",
+        "group_id": 9,
+        "budget": false
+    },
+    {
+        "full_name": "Maslov Rodion Mironovich",
+        "date_of_birth": ISODate("2003-12-28"),
+        "address": "g. Yekaterinburg, ul. Pervomayskaya, d. 3",
+        "email": "34@mail.ru",
+        "group_id": 9,
+        "budget": true
+    },
+    {
+        "full_name": "Borisov Stepan Maksimovich",
+        "date_of_birth": ISODate("2000-06-29"),
+        "address": "g. Ufa, ul. Shkolnaya, d. 43",
+        "email": "44@mail.ru",
+        "group_id": 9,
+        "budget": false
+    },
+    {
+        "full_name": "Veselov Osip Vladimirovich",
+        "date_of_birth": ISODate("2002-11-17"),
+        "address": "g. Voronezh, ul. Naberezhnaya, d. 17",
+        "email": "21@mail.ru",
+        "group_id": 9,
+        "budget": true
+    },
+    {
+        "full_name": "Yershov Alan Mikhaylovich",
+        "date_of_birth": ISODate("2003-01-17"),
+        "address": "g. Samara, ul. Oktyabrskaya, d. 46",
+        "email": "36@mail.ru",
+        "group_id": 9,
+        "budget": false
+    },
+    {
+        "full_name": "Vorobyov Irakliy Evseevich",
+        "date_of_birth": ISODate("2000-01-31"),
+        "address": "g. Saint Petersburg, ul. Polevaya, d. 47",
+        "email": "31@mail.ru",
+        "group_id": 9,
+        "budget": true
+    },
+    {
+        "full_name": "Ignatyev Igor Gelasyevich",
+        "date_of_birth": ISODate("2000-10-06"),
+        "address": "g. Perm, ul. Sovetskaya, d. 50",
+        "email": "34@mail.ru",
+        "group_id": 9,
+        "budget": false
+    },
+    {
+        "full_name": "Kovriginus Nicolaus Dmitrievich",
+        "date_of_birth": ISODate("2002-11-05"),
+        "address": "Almetyevsk, Yuzhnaya str., No. 10",
+        "email": "fifif1412@mail.ru",
+        "group_id": 9,
+        "budget": false
+
+db.Phone_numbers.insertMany([
+    { student_id: 1, phone_number: "+79048061802" },
+    { student_id: 2, phone_number: "+79546203578" },
+    { student_id: 3, phone_number: "+79936318426" },
+    { student_id: 4, phone_number: "+79039627604" },
+    { student_id: 5, phone_number: "+79173442983" },
+    { student_id: 6, phone_number: "+79415618707" },
+    { student_id: 7, phone_number: "+79198825103" },
+    { student_id: 8, phone_number: "+79815433829" },
+    { student_id: 9, phone_number: "+79330614924" },
+    { student_id: 10, phone_number: "+79286770640" },
+    { student_id: 11, phone_number: "+79042552700" },
+    { student_id: 12, phone_number: "+79003291047" },
+    { student_id: 13, phone_number: "+79565040415" },
+    { student_id: 14, phone_number: "+79147948239" },
+    { student_id: 15, phone_number: "+79293878495" },
+    { student_id: 16, phone_number: "+79264355611" },
+    { student_id: 17, phone_number: "+79852341841" },
+    { student_id: 18, phone_number: "+79869550873" },
+    { student_id: 19, phone_number: "+79233364725" },
+    { student_id: 20, phone_number: "+79218677081" },
+    { student_id: 21, phone_number: "+79234981400" },
+    { student_id: 22, phone_number: "+79887671279" },
+    { student_id: 23, phone_number: "+79808544842" },
+    { student_id: 24, phone_number: "+79945785194" },
+    { student_id: 25, phone_number: "+79337500572" },
+    { student_id: 26, phone_number: "+79509933277" },
+    { student_id: 27, phone_number: "+79851429156" },
+    { student_id: 28, phone_number: "+79210257665" },
+    { student_id: 29, phone_number: "+79271902337" },
+    { student_id: 30, phone_number: "+79960684845" },
+    { student_id: 31, phone_number: "+79921236807" },
+    { student_id: 32, phone_number: "+79532750779" },
+    { student_id: 33, phone_number: "+79179556936" },
+    { student_id: 34, phone_number: "+79774358161" },
+    { student_id: 35, phone_number: "+79327641195" },
+    { student_id: 36, phone_number: "+79328804913" },
+    { student_id: 37, phone_number: "+79661076934" },
+    { student_id: 38, phone_number: "+79787312828" },
+    { student_id: 39, phone_number: "+79893103000" },
+    { student_id: 40, phone_number: "+79374621453" },
+    { student_id: 41, phone_number: "+79165314473" },
+    { student_id: 42, phone_number: "+79602986017" },
+    { student_id: 43, phone_number: "+79201423462" },
+    { student_id: 44, phone_number: "+79274776777" },
+    { student_id: 45, phone_number: "+79277724888" },
+    { student_id: 46, phone_number: "+79384791239" },
+    { student_id: 47, phone_number: "+79325499868" },
+    { student_id: 48, phone_number: "+79600148414" },
+    { student_id: 49, phone_number: "+79581208298" },
+    { student_id: 50, phone_number: "+79296719668" },
+    { student_id: 51, phone_number: "+79953955796" },
+    { student_id: 52, phone_number: "+79167751037" },
+    { student_id: 53, phone_number: "+79947895870" },
+    { student_id: 54, phone_number: "+79287828545" },
+    { student_id: 55, phone_number: "+79713546229" },
+    { student_id: 56, phone_number: "+79781047873" },
+    { student_id: 57, phone_number: "+79249454852" },
+    { student_id: 58, phone_number: "+79549097571" },
+    { student_id: 59, phone_number: "+79851913349" },
+    { student_id: 60, phone_number: "+79209791266" },
+    { student_id: 61, phone_number: "+79846643183" },
+    { student_id: 62, phone_number: "+79125692800" },
+    { student_id: 63, phone_number: "+79789626705" },
+    { student_id: 64, phone_number: "+79060838058" },
+    { student_id: 65, phone_number: "+79002402365" },
+    { student_id: 66, phone_number: "+79610909316" },
+    { student_id: 67, phone_number: "+79820594620" },
+    { student_id: 68, phone_number: "+79215991387" },
+    { student_id: 69, phone_number: "+79112038773" },
+    { student_id: 70, phone_number: "+79808892905" },
+    { student_id: 71, phone_number: "+79850385938" },
+    { student_id: 72, phone_number: "+79946004373" },
+    { student_id: 73, phone_number: "+79148974075" },
+    { student_id: 74, phone_number: "+79097068056" },
+    { student_id: 75, phone_number: "+79314210530" },
+    { student_id: 76, phone_number: "+79260114308" },
+    { student_id: 77, phone_number: "+79399195452" },
+    { student_id: 78, phone_number: "+79146352065" },
+    { student_id: 79, phone_number: "+79712102601" },
+    { student_id: 80, phone_number: "+79125482841" },
+    { student_id: 81, phone_number: "+79659915000" },
+    { student_id: 82, phone_number: "+79719028448" },
+    { student_id: 83, phone_number: "+79941554960" },
+    { student_id: 84, phone_number: "+79656323952" },
+    { student_id: 85, phone_number: "+79526448708" },
+    { student_id: 86, phone_number: "+79004941735" },
+    { student_id: 87, phone_number: "+79700920591" },
+    { student_id: 88, phone_number: "+79195367015" },
+    { student_id: 89, phone_number: "+79207179941" },
+    { student_id: 90, phone_number: "+79032085122" },
+    { student_id: 91, phone_number: "+79335734092" },
+    { student_id: 92, phone_number: "+79193165320" },
+    { student_id: 93, phone_number: "+79850318117" },
+    { student_id: 94, phone_number: "+79293493458" },
+    { student_id: 95, phone_number: "+79027489945" }
+]);
+
+db.Teachers.insertMany([
+  { full_name: "Osipov Fyodor Leonidovich" },
+  { full_name: "Osipov Alexander Leonidovich" },
+  { full_name: "Cheglov Yegor Romanovich" },
+  { full_name: "Kovrigin Alexey Viktorovich" },
+  { full_name: "Pashkov Petr Mikhaylovich" }
+]);
+
+db.Disciplines.insertMany([
+  { name: "Programming of discrete structures" },
+  { name: "Data analysis" },
+  { name: "Information security" },
+  { name: "Programming technologies" },
+  { name: "Combinatorics" },
+  { name: "Database technologies" },
+  { name: "Information systems design" }
+]);
+            
+db.DirectionDisciplineTeacher.insertMany([
+  { direction_id: 1, discipline_id: 1, teacher_id: 1 },
+  { direction_id: 1, discipline_id: 3, teacher_id: 3 },
+  { direction_id: 1, discipline_id: 4, teacher_id: 3 },
+  { direction_id: 2, discipline_id: 6, teacher_id: 5 },
+  { direction_id: 2, discipline_id: 7, teacher_id: 5 },
+  { direction_id: 2, discipline_id: 5, teacher_id: 4 },
+  { direction_id: 2, discipline_id: 1, teacher_id: 1 },
+  { direction_id: 3, discipline_id: 2, teacher_id: 2 },
+  { direction_id: 3, discipline_id: 3, teacher_id: 3 },
+  { direction_id: 3, discipline_id: 4, teacher_id: 3 },
+  { direction_id: 3, discipline_id: 1, teacher_id: 1 }
+]);
+
+db.Marks.insertMany([
+  { student_id: 1, sub_disc_teach_id: 1, mark: 5 },
+  { student_id: 1, sub_disc_teach_id: 2, mark: 5 },
+  { student_id: 1, sub_disc_teach_id: 3, mark: 3 },
+  { student_id: 2, sub_disc_teach_id: 1, mark: 2 },
+  { student_id: 2, sub_disc_teach_id: 2, mark: 4 },
+  { student_id: 2, sub_disc_teach_id: 3, mark: 2 },
+  { student_id: 3, sub_disc_teach_id: 1, mark: 5 },
+  { student_id: 3, sub_disc_teach_id: 2, mark: 5 },
+  { student_id: 3, sub_disc_teach_id: 3, mark: 5 },
+  { student_id: 4, sub_disc_teach_id: 1, mark: 5 },
+  { student_id: 4, sub_disc_teach_id: 2, mark: 5 },
+  { student_id: 4, sub_disc_teach_id: 3, mark: 5 },
+  { student_id: 5, sub_disc_teach_id: 1, mark: 3 },
+  { student_id: 5, sub_disc_teach_id: 2, mark: 4 },
+  { student_id: 5, sub_disc_teach_id: 3, mark: 4 }
+]);
+
+db.Marks.insertMany([
+  { student_id: 24, sub_disc_teach_id: 4, mark: 2 },
+  { student_id: 25, sub_disc_teach_id: 4, mark: 5 },
+  { student_id: 26, sub_disc_teach_id: 4, mark: 2 },
+  { student_id: 27, sub_disc_teach_id: 4, mark: 3 },
+  { student_id: 24, sub_disc_teach_id: 5, mark: 3 },
+  { student_id: 25, sub_disc_teach_id: 5, mark: 5 },
+  { student_id: 26, sub_disc_teach_id: 5, mark: 2 },
+  { student_id: 27, sub_disc_teach_id: 5, mark: 4 },
+  { student_id: 24, sub_disc_teach_id: 6, mark: 5 },
+  { student_id: 25, sub_disc_teach_id: 6, mark: 5 }
+]);
+
+db.Marks.insertMany([
+  { student_id: 52, sub_disc_teach_id: 8, mark: 5 },
+  { student_id: 53, sub_disc_teach_id: 8, mark: 2 },
+  { student_id: 54, sub_disc_teach_id: 8, mark: 5 },
+  { student_id: 55, sub_disc_teach_id: 8, mark: 4 },
+  { student_id: 52, sub_disc_teach_id: 9, mark: 4 },
+  { student_id: 53, sub_disc_teach_id: 9, mark: 3 },
+  { student_id: 54, sub_disc_teach_id: 9, mark: 5 },
+  { student_id: 55, sub_disc_teach_id: 9, mark: 4 }
+]);
+
+db.Marks.insertMany([
+  { student_id: 52, sub_disc_teach_id: 8, mark: 5 },
+  { student_id: 53, sub_disc_teach_id: 8, mark: 2 },
+  { student_id: 54, sub_disc_teach_id: 8, mark: 5 },
+  { student_id: 55, sub_disc_teach_id: 8, mark: 4 },
+  { student_id: 52, sub_disc_teach_id: 9, mark: 4 },
+  { student_id: 53, sub_disc_teach_id: 9, mark: 3 },
+  { student_id: 54, sub_disc_teach_id: 9, mark: 5 },
+  { student_id: 55, sub_disc_teach_id: 9, mark: 4 },
+  { student_id: 52, sub_disc_teach_id: 10, mark: 3 },
+  { student_id: 53, sub_disc_teach_id: 10, mark: 4 }
+]);
+
+db.Marks.insertMany([
+  { student_id: 52, sub_disc_teach_id: 8, mark: 5 },
+  { student_id: 53, sub_disc_teach_id: 8, mark: 2 },
+  { student_id: 54, sub_disc_teach_id: 8, mark: 5 },
+  { student_id: 55, sub_disc_teach_id: 8, mark: 4 },
+  { student_id: 52, sub_disc_teach_id: 9, mark: 4 },
+  { student_id: 53, sub_disc_teach_id: 9, mark: 3 },
+  { student_id: 54, sub_disc_teach_id: 9, mark: 5 },
+  { student_id: 55, sub_disc_teach_id: 9, mark: 4 },
+  { student_id: 52, sub_disc_teach_id: 10, mark: 3 },
+  { student_id: 53, sub_disc_teach_id: 10, mark: 4 }
+]);
+
+db.Pair_time.insertMany([
+    { time_start: "8:00", time_end: "9:30" },
+    { time_start: "9:40", time_end: "11:10" },
+    { time_start: "11:25", time_end: "12:50" },
+    { time_start: "13:20", time_end: "14:50" },
+    { time_start: "15:05", time_end: "16:35" },
+    { time_start: "16:50", time_end: "18:20" },
+    { time_start: "18:30", time_end: "20:00" },
+    { time_start: "20:05", time_end: "21:35" }
+]);
+
+db.Lessons_schedule.insertMany([
+    { sub_disc_teach_id: 1, time_id: 1, date: "2023-09-01" },
+    { sub_disc_teach_id: 1, time_id: 2, date: "2023-09-11" },
+    { sub_disc_teach_id: 1, time_id: 3, date: "2023-10-01" },
+    { sub_disc_teach_id: 1, time_id: 4, date: "2023-10-11" },
+    { sub_disc_teach_id: 1, time_id: 5, date: "2023-11-01" },
+    { sub_disc_teach_id: 1, time_id: 6, date: "2023-11-11" },
+    { sub_disc_teach_id: 1, time_id: 7, date: "2023-12-01" },
+    { sub_disc_teach_id: 1, time_id: 8, date: "2023-12-11" },
+    { sub_disc_teach_id: 2, time_id: 1, date: "2023-09-02" },
+    { sub_disc_teach_id: 2, time_id: 2, date: "2023-09-12" },
+    { sub_disc_teach_id: 2, time_id: 3, date: "2023-10-02" },
+    { sub_disc_teach_id: 2, time_id: 4, date: "2023-10-12" },
+    { sub_disc_teach_id: 2, time_id: 5, date: "2023-11-02" },
+    { sub_disc_teach_id: 2, time_id: 6, date: "2023-11-12" },
+    { sub_disc_teach_id: 2, time_id: 7, date: "2023-12-02" },
+    { sub_disc_teach_id: 2, time_id: 8, date: "2023-12-12" },
+    { sub_disc_teach_id: 3, time_id: 1, date: "2023-09-03" },
+    { sub_disc_teach_id: 3, time_id: 2, date: "2023-09-13" },
+    { sub_disc_teach_id: 3, time_id: 3, date: "2023-10-03" },
+    { sub_disc_teach_id: 3, time_id: 4, date: "2023-10-13" },
+    { sub_disc_teach_id: 3, time_id: 5, date: "2023-11-03" },
+    { sub_disc_teach_id: 3, time_id: 6, date: "2023-11-13" },
+    { sub_disc_teach_id: 3, time_id: 7, date: "2023-12-03" },
+    { sub_disc_teach_id: 3, time_id: 8, date: "2023-12-13" },
+    { sub_disc_teach_id: 4, time_id: 1, date: "2023-09-04" },
+    { sub_disc_teach_id: 4, time_id: 2, date: "2023-09-14" },
+    { sub_disc_teach_id: 4, time_id: 3, date: "2023-10-04" },
+    { sub_disc_teach_id: 4, time_id: 4, date: "2023-10-14" },
+    { sub_disc_teach_id: 4, time_id: 5, date: "2023-11-04" },
+    { sub_disc_teach_id: 4, time_id: 6, date: "2023-11-14" },
+    { sub_disc_teach_id: 4, time_id: 7, date: "2023-12-04" },
+    { sub_disc_teach_id: 4, time_id: 8, date: "2023-12-14" },
+    { sub_disc_teach_id: 5, time_id: 1, date: "2023-09-05" },
+    { sub_disc_teach_id: 5, time_id: 2, date: "2023-09-15" },
+    { sub_disc_teach_id: 5, time_id: 3, date: "2023-10-05" },
+    { sub_disc_teach_id: 5, time_id: 4, date: "2023-10-15" },
+    { sub_disc_teach_id: 5, time_id: 5, date: "2023-11-05" },
+    { sub_disc_teach_id: 5, time_id: 6, date: "2023-11-16" },
+    { sub_disc_teach_id: 5, time_id: 7, date: "2023-12-05" },
+    { sub_disc_teach_id: 5, time_id: 8, date: "2023-12-15" },
+    { sub_disc_teach_id: 6, time_id: 1, date: "2023-09-06" },
+    { sub_disc_teach_id: 6, time_id: 2, date: "2023-09-16" },
+    { sub_disc_teach_id: 6, time_id: 3, date: "2023-10-06" },
+    { sub_disc_teach_id: 6, time_id: 4, date: "2023-10-16" },
+    { sub_disc_teach_id: 6, time_id: 5, date: "2023-11-06" },
+    { sub_disc_teach_id: 6, time_id: 6, date: "2023-11-16" },
+    { sub_disc_teach_id: 6, time_id: 7, date: "2023-12-06" },
+    { sub_disc_teach_id: 6, time_id: 8, date: "2023-12-16" },
+    { sub_disc_teach_id: 7, time_id: 1, date: "2023-09-07" },
+    { sub_disc_teach_id: 7, time_id: 2, date: "2023-09-17" },
+    { sub_disc_teach_id: 7, time_id: 3, date: "2023-10-07" },
+    { sub_disc_teach_id: 7, time_id: 4, date: "2023-10-17" },
+    { sub_disc_teach_id: 7, time_id: 5, date: "2023-11-07" },
+    { sub_disc_teach_id: 7, time_id: 6, date: "2023-11-17" },
+    { sub_disc_teach_id: 7, time_id: 7, date: "2023-12-07" },
+    { sub_disc_teach_id: 7, time_id: 8, date: "2023-12-17" },
+    { sub_disc_teach_id: 8, time_id: 1, date: "2023-09-07" },
+    { sub_disc_teach_id: 8, time_id: 2, date: "2023-09-17" },
+    { sub_disc_teach_id: 8, time_id: 3, date: "2023-10-07" },
+    { sub_disc_teach_id: 8, time_id: 4, date: "2023-10-17" },
+    { sub_disc_teach_id: 8, time_id: 5, date: "2023-11-07" },
+    { sub_disc_teach_id: 8, time_id: 6, date: "2023-11-17" },
+    { sub_disc_teach_id: 8, time_id: 7, date: "2023-12-07" },
+    { sub_disc_teach_id: 8, time_id: 8, date: "2023-12-17" },
+    { sub_disc_teach_id: 9, time_id: 1, date: "2023-09-08" },
+    { sub_disc_teach_id: 9, time_id: 2, date: "2023-09-18" },
+    { sub_disc_teach_id: 9, time_id: 3, date: "2023-10-08" },
+    { sub_disc_teach_id: 9, time_id: 4, date: "2023-10-18" },
+    { sub_disc_teach_id: 9, time_id: 5, date: "2023-11-08" },
+    { sub_disc_teach_id: 9, time_id: 6, date: "2023-11-18" },
+    { sub_disc_teach_id: 9, time_id: 7, date: "2023-12-08" },
+    { sub_disc_teach_id: 9, time_id: 8, date: "2023-12-18" },
+    { sub_disc_teach_id: 10, time_id: 1, date: "2023-09-09"},
+    { sub_disc_teach_id: 10, time_id: 2, date: "2023-09-09"},
+    { sub_disc_teach_id: 10, time_id: 3, date: "2023-10-09"},
+    { sub_disc_teach_id: 10, time_id: 4, date: "2023-10-19"},
+    { sub_disc_teach_id: 10, time_id: 5, date: "2023-11-09"},
+    { sub_disc_teach_id: 10, time_id: 6, date: "2023-11-19"},
+    { sub_disc_teach_id: 10, time_id: 7, date: "2023-12-09"},
+    { sub_disc_teach_id: 10, time_id: 8, date: "2023-12-19"},
+    { sub_disc_teach_id: 11, time_id: 1, date: "2023-09-10"},
+    { sub_disc_teach_id: 11, time_id: 2, date: "2023-09-20"},
+    { sub_disc_teach_id: 11, time_id: 3, date: "2023-10-10"},
+    { sub_disc_teach_id: 11, time_id: 4, date: "2023-10-20"},
+    { sub_disc_teach_id: 11, time_id: 5, date: "2023-11-10"},
+    { sub_disc_teach_id: 11, time_id: 6, date: "2023-11-20"},
+    { sub_disc_teach_id: 11, time_id: 7, date: "2023-12-10"},
+    { sub_disc_teach_id: 11, time_id: 8, date: "2023-12-20"},
+
+db.Attendance.insertMany([
+    { schedule_id: 1, student_id: 1, presence: 0 },
+    { schedule_id: 1, student_id: 2, presence: 1 },
+    { schedule_id: 1, student_id: 3, presence: 1 },
+    { schedule_id: 1, student_id: 4, presence: 0 },
+    { schedule_id: 1, student_id: 5, presence: 1 },
+    { schedule_id: 1, student_id: 6, presence: 0 },
+    { schedule_id: 1, student_id: 7, presence: 1 },
+    { schedule_id: 1, student_id: 8, presence: 1 },
+    { schedule_id: 1, student_id: 9, presence: 1 }
+]);
